@@ -20,8 +20,8 @@ button all live there.
 
 ## 1. Add the connector
 
-1. In Claude, open **Settings → Connectors** and click **Add custom
-   connector**.
+1. In Claude, open **Settings → Customize → Connectors** and click **Add
+   custom connector**.
 2. Name it `makemedia` and paste the connector URL from the table above.
 3. Click **Connect** and sign in with your `kcilink.com` Google account.
    Other accounts are refused.
@@ -31,20 +31,26 @@ the web and on mobile.
 
 ## 2. Turn on what the skills need
 
-In **Settings → Capabilities**:
-
-- **Code execution and file creation**: turn it on. Skills need it, and it
-  helps Claude convert uploaded transcripts exactly.
-- **Memory**: optional. When it's on, Claude remembers which customer each
-  project is for. The project instructions (step 4) do that job whether
-  memory is on or off.
+- **Code execution and file creation** (Settings → Capabilities): turn it
+  on. Skills need it, and it helps Claude convert uploaded transcripts
+  exactly.
+- **Memory** has two settings. makemedia needs neither, because the project
+  instructions (step 4) record which customer each project is for:
+  - **Generate memory from chats**: optional. When it's on, Claude also
+    saves the project's customer to that project's memory, as a backup to
+    the instructions. Each project's memory is kept separate from other
+    projects.
+  - **Search and reference chats**: optional and not used by makemedia. It
+    lets Claude look up your earlier chats when you ask about them. Inside a
+    project it only searches that project's chats, so it doesn't mix
+    customers.
 
 ## 3. Install the skills
 
 1. Open this repository's **[latest release](../../releases/latest)** and
    download the `.zip` files under **Assets**. Don't unzip them.
-2. In Claude, open **Settings → Capabilities → Skills**, click **Upload
-   skill**, and choose a zip. Repeat for each zip.
+2. In Claude, open **Settings → Customize → Skills**, click **Upload
+   skill** (or **+**), and choose a zip. Repeat for each zip.
 
 | Zip | What it does |
 |---|---|
@@ -55,9 +61,25 @@ In **Settings → Capabilities**:
 | `linkedin-post.zip` | Writes a LinkedIn post, optionally from a transcript |
 
 **Updating:** when a new release comes out, delete the old skills in
-Settings → Capabilities → Skills and upload the new zips. Then disconnect
-and reconnect the connector (Settings → Connectors → makemedia), so Claude
-picks up any new tools.
+Settings → Customize → Skills and upload the new zips. Then disconnect
+and reconnect the connector (Settings → Customize → Connectors →
+makemedia), so Claude picks up any new tools.
+
+### Installing from GitHub instead of zips
+
+This repository is also a **plugin marketplace** containing one plugin,
+`makemedia`, which includes all the skills. Where Claude can add a
+marketplace, you install once and update from GitHub instead of uploading
+zips:
+
+- **Claude desktop app** (if your version has **Settings → Customize →
+  Plugins**): choose **Add marketplace**, enter
+  `MakeMEDIA-Corp/makemedia-skills`, then install **makemedia**. Check that
+  the skills appear under Customize → Skills and work in the Chat tab. If
+  they don't, use the zips.
+- **Claude Code:** `/plugin marketplace add MakeMEDIA-Corp/makemedia-skills`,
+  then `/plugin install makemedia@makemedia`. Update with
+  `/plugin marketplace update makemedia`.
 
 The connector works without the skills too, because its tool descriptions
 tell Claude what to do. The skills make the flow smoother and keep
@@ -105,7 +127,7 @@ and your email address.
 |---|---|
 | Claude doesn't use makemedia | In the chat, open the tools menu (the **+** button or the tools icon) and check that **makemedia** is turned on. |
 | Skill upload is refused | Turn on **Code execution and file creation** (step 2), and upload the zip itself, not its contents. |
-| New tools or workflows don't appear after an update | Settings → Connectors → makemedia: disconnect and reconnect. |
+| New tools or workflows don't appear after an update | Settings → Customize → Connectors → makemedia: disconnect and reconnect. |
 | Sign-in fails or loops | Sign in with your `kcilink.com` account. If Google picks another account, use a private window or switch accounts in the Google screen. |
 | "Company not found" | You've lost access, or the ID is wrong. Ask the company's owner to add you again. |
 | "A company for … already exists" | A colleague owns it. Ask the owner named in the message to add you. |

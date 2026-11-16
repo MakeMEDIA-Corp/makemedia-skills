@@ -1,0 +1,13 @@
+{
+  "name": "makemedia",
+  "owner": {"name": "MakeMEDIA", "email": "vivek@kcilink.com"},
+  "description": "makemedia skills for Claude: marketing work and content per customer, with the makemedia connector.",
+  "plugins": [
+    {
+      "name": "makemedia",
+      "source": "./",
+      "description": "Company profiles, personas, interviews and LinkedIn posts with the makemedia connector.",
+      "version": "0.2.0"
+    }
+  ]
+}
