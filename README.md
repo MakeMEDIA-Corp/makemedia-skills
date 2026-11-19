@@ -33,6 +33,9 @@ the web and on mobile.
 
 - **Create and edit files** (Settings → Capabilities): turn it on. Skills
   need it, and it helps Claude convert uploaded transcripts exactly.
+- **Web search**: in a chat, open the tools menu (the **+** button or the
+  tools icon) and make sure **Web search** is on. Claude uses it to read a
+  company's website when setting the company up.
 - **Memory** has two settings. makemedia needs neither, because the project
   instructions (step 4) record which customer each project is for:
   - **Generate memory from chats**: optional. When it's on, Claude also
@@ -59,7 +62,7 @@ Install them from this GitHub repository, so they stay up to date:
 | Skill | What it does |
 |---|---|
 | `makemedia` | Core rules: one customer per project, uploading transcripts, sharing |
-| `company-profile` | Researches a company's website and saves its profile |
+| `company-profile` | Sets up a company: basics, then services, customer characteristics, content topics and SEO keywords |
 | `customer-persona` | Creates a customer persona |
 | `discovery-interview` | Runs an interview to set engagement goals |
 | `linkedin-post` | Writes a LinkedIn post, optionally from a transcript |
@@ -82,7 +85,13 @@ customers separate.
 
 1. In the Chat tab, create a **project** for the customer (e.g. "Acme").
 2. Start a chat in it: "Use makemedia for Acme (acme.com)." Claude finds
-   the company, or creates its profile, and gives you a line like:
+   the company, or sets it up. For a new company it asks for the name,
+   website, region (optional) and the size of the company's target
+   customers. It then drafts the company's services, customer
+   characteristics, content topics and SEO keywords, one step at a time,
+   for you to review. If you've connected an SEO tool such as Semrush or
+   Moz in Claude, it adds search volume and rankings to the keywords.
+   Claude also gives you a line like:
 
    ```
    makemedia company_id: co_abc123 (Acme Corp). Use only this company for makemedia in this project.
@@ -111,6 +120,9 @@ and your email address.
 - **Sharing a customer with a colleague:** "Give jane@kcilink.com access
   to this company." Only owners can do this. The colleague then sets up
   their own project for that customer (step 4).
+- **Company settings:** "Review Acme's settings" or "Refresh Acme's
+  keywords" at any time. makemedia records each review and reminds you
+  after about four months.
 - **Unfinished work:** interviews and other multi-step workflows carry
   over to new chats. Ask "Do I have any unfinished makemedia sessions?"
 

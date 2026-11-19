@@ -32,7 +32,7 @@ makemedia company_id: co_abc123 (Acme Corp)
 ## 2. Pin the company to the project
 
 As soon as the company_id is known (chosen, or returned by
-`save_company_profile`):
+`save_company`):
 
 1. **Save it to memory**, if you can save memories here, with exactly:
    `makemedia company_id: <company_id> (<company name>)`
@@ -104,7 +104,7 @@ first owner, and a company always keeps at least one owner.
 - **Change a role:** `add_company_member` with the new role.
 - **Remove access:** confirm with the user first, then
   `remove_company_member`. Members can remove themselves.
-- If `save_company_profile` says the company exists but the user has no
+- If `save_company` says the company exists but the user has no
   access, tell them which owner to ask. Don't create a second company for
   the same website.
 

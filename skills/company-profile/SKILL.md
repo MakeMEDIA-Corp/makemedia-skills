@@ -1,60 +1,148 @@
 ---
 name: company-profile
-description: Research a company from its website and save its ideal customer profile (ICP) and product catalog to makemedia. Use when the user wants to set up, add, research or update a company, or when another makemedia workflow needs a company profile that doesn't exist yet. Requires the makemedia connector.
+description: Set up a company in makemedia, or review and refresh its settings. Collects the company's name, website, region and target customer size, then drafts its services, customer characteristics (ideal client profile), profile topics and SEO keywords for the user to review. Use when the user wants to set up, add, update, review or refresh a company, its profile, its content topics or its SEO keywords, or when another makemedia workflow needs a company that isn't set up yet. Requires the makemedia connector.
 ---
 
 # Company profile
 
-Builds a company profile by researching the company's website yourself, then
-saves it with the makemedia connector so later workflows (personas,
-interviews) can use it.
+A company's profile has two parts. Later workflows (personas, interviews,
+posts) build on both.
+
+- **Basics**, which the user provides: name, website, region and target
+  customer size.
+- **Settings**, which are drafted and then reviewed by the user, in this
+  order, because each builds on the ones before:
+  1. **Services**: what the company sells, from its website.
+  2. **Customer characteristics**: its ideal client profile, from its
+     website.
+  3. **Profile topics**: about 15 high-level topics its content should focus
+     on, from the basics and the first two settings.
+  4. **Keywords**: about 50 SEO keywords, from the profile topics.
+
+  makemedia records when each setting was last reviewed, and asks for a
+  fresh review about every four months.
 
 ## Steps
 
-1. **Check the project's company.** Follow the makemedia skill: look for a
-   pinned `makemedia company_id` in the project instructions or memory.
-   - Pinned: this run refreshes that company's profile. Pass its
-     `company_id` when saving, and skip asking for the basics you can get
-     from `get_company`.
-   - Not pinned: confirm with the user that this project is for the company
-     they're asking about (one customer per project). If the company is
-     already in `list_companies`, ask whether to use it as is or refresh it.
+1. **Check the project's company.** Follow the makemedia skill and look for
+   a pinned `makemedia company_id` in the project instructions or memory.
+   - **Pinned:** call `get_company`. Its `profile` holds the current basics
+     and settings, and `review_due` lists settings that were never set up or
+     are older than four months. If the user only wants a review or a
+     refresh, go to "Review and refresh" below.
+   - **Not pinned:** confirm with the user that this project is for the
+     company they're asking about (one customer per project). If the
+     company is already in `list_companies`, use it rather than creating a
+     new one.
 
-2. **Collect the basics.** Ask for anything the user hasn't already given:
-   - Company name
-   - Website URL
-   - Size: number of employees **or** annual recurring revenue (ARR). Either
-     is fine; an estimate is fine.
+2. **Collect the basics.** Ask for anything the user hasn't already given.
+   Use the user's own words. Don't research or guess these.
+   - **Company name**: how the company is identified in every workflow.
+   - **Website**: the company's main URL. For a division of a larger
+     company, use the division's section of the main site (for example
+     `https://example.com/cloud`).
+   - **Region** (optional): the country, state or city where the business
+     operates. Leave it out if the user names none, which means there's no
+     restriction.
+   - **Customer size**: how big the company's target customers are, by
+     employees, revenue or another measure. Examples: "10-20 employees",
+     "$5-$10 million ARR", "100+ employees with $50M ARR", "Fortune 1000".
 
-3. **Research.** Search and read the company's website (home page, product or
-   solutions pages, pricing, customers or case studies, about page) and other
-   reputable sources if needed. Work out:
-   - What the company does, in one or two sentences.
-   - Its **ideal customer profile**: industries, company sizes, regions,
-     buyer roles, the pain points it solves, and what triggers a purchase.
-   - Its **products**: name, short description and target customer for
-     each. Give each product a short, unique slug as its `id` (for example
-     `analytics-pro`).
-   - The URLs you used.
-
-   Only state what the sources support. If something isn't clear, leave the
-   list empty or the number null rather than guessing.
-
-4. **Confirm with the user.** Show a short summary: the ICP summary, the
-   products (with their IDs), and anything you couldn't determine. Apply any
-   corrections they give.
-
-5. **Save.** Call `save_company_profile` with the profile. Its input schema
-   lists every field. If it returns a validation error, fix the named fields
-   and call it again.
+3. **Save the basics.** Call `save_company` with them, and with
+   `company_id` if the company already exists. If the company wasn't pinned
+   yet, pin the returned `company_id` now, as the makemedia skill
+   describes.
 
    If it says the company already exists and the user has no access, tell
    them which owner to ask for access. Don't create a second company.
 
-6. **Pin and report.** If the company wasn't pinned yet, pin the returned
-   `company_id` to this project as the makemedia skill describes: save it
-   to memory and give the user the line for the project instructions.
-   Tell the user the profile is saved. Mention that they're its owner and
-   can share it with colleagues. Suggest a next step, such as a customer
-   persona (customer-persona skill) or a discovery interview
-   (discovery-interview skill).
+4. **Work out the services.** Using your web tools, follow these
+   instructions yourself, with `<website>` replaced by the saved website:
+
+   > This is my company's website: `<website>`
+   >
+   > Review my Home page, About page and my Products and/or Services and/or
+   > Solutions pages and summarize or list the products and/or services
+   > that I sell. Give me your response as a list without any additional
+   > explanation or formatting. If you cannot access my website, indicate
+   > the reason and return empty list.
+
+   For a division, stay within the division's section of the site. If you
+   have no web access or the site can't be read, tell the user why and ask
+   them to list their services instead.
+
+5. **Get the customer characteristics.** Call `start_workflow` with
+   `workflow: "customer_characteristics"`, the `company_id` and
+   `inputs: {}`. The server reads the website using the saved website and
+   customer size. Follow `agent_instructions`. If it's `working`, call
+   `get_session` until it completes. Keep the result's `artifact_id`.
+
+6. **Review services and characteristics.** Show both together:
+   - Services as a list.
+   - The customer characteristics text exactly as returned. If the result
+     has an `error`, explain it and ask the user to describe their ideal
+     client in a sentence.
+
+   Ask the user to approve them, or to add, remove or reword anything.
+   Apply their changes. Don't save until they approve.
+
+7. **Save them.** Call `save_company_settings` with the `company_id`, the
+   approved `services` list, `customer_characteristics`, and
+   `from_artifact_ids` set to the workflow result's `artifact_id` (leave it
+   out if the user wrote the text themselves). They must be saved before
+   the next step, which reads them.
+
+8. **Profile topics.** Call `start_workflow` with
+   `workflow: "profile_topics"`, the `company_id` and `inputs: {}`. Show
+   the topics as a numbered list and ask the user to approve them or to
+   add, remove or reword topics. Topics are subjects to talk about, not
+   article titles. Save the approved list with `save_company_settings`
+   (`profile_topics`, and the result's `artifact_id` in
+   `from_artifact_ids`).
+
+9. **Keywords.** Call `start_workflow` with `workflow: "keywords"`, the
+   `company_id` and `inputs: {}`. It uses the saved topics.
+
+   **Enrich them with an SEO tool, if the user has one.** Check whether you
+   have a skill or connector for an SEO service such as Semrush, Moz or
+   Ahrefs. If you do, use it to look up each keyword's monthly search
+   volume, keyword difficulty (0-100) and the company website's current
+   ranking, in the company's region if it has one. The tool may also
+   suggest closely related keywords with better volume; offer those as
+   additions. Only record numbers the tool returned, never estimates, and
+   name the tool in each keyword's `source`. If you have no SEO tool, skip
+   this part, and mention once that connecting one (for example Semrush or
+   Moz) would add search volume and rankings.
+
+   Show the keywords as a table (keyword, then volume, difficulty and rank
+   if you have them), sorted by volume when known. Ask the user to approve
+   the list or to add or remove keywords. Then save it with
+   `save_company_settings`: `keywords` as a list of objects, each with
+   `keyword` and any of `search_volume`, `difficulty`, `rank` and `source`,
+   and the result's `artifact_id` in `from_artifact_ids`.
+
+10. **Report.** Tell the user the company is set up, that they're its owner
+    if they created it, and that they can share it with colleagues. Suggest
+    a next step, such as a customer persona or a LinkedIn post.
+
+## Review and refresh
+
+Users can review or refresh the settings at any time. When `get_company`
+shows settings in `review_due`, or a workflow's `agent_instructions` say
+they're due, offer a review.
+
+- **Review:** show the current settings from `get_company`'s `profile`.
+  If the user confirms them unchanged, still call `save_company_settings`
+  with the same values, because that records the review. Save any edits
+  they make.
+- **Refresh:** redo the step for each setting the user picks (step 4 for
+  services, 5 for customer characteristics, 8 for topics, 9 for keywords).
+  Show the new version next to the current one, then save what they
+  approve. Save each one before refreshing a setting that builds on it.
+- **Knock-on refreshes:** if `save_company` or `save_company_settings`
+  returns `refresh_suggested`, those settings were built from something
+  that just changed (for example, new services make the topics and
+  keywords out of date). Offer to refresh them, in the order listed.
+
+Pass only the settings the user reviewed. A setting you leave out keeps its
+previous review date.

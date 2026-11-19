@@ -14,7 +14,7 @@ present the post.
 1. **Use the project's company.** Use the `makemedia company_id` pinned in
    the project instructions or memory (see the makemedia skill). If none is
    pinned, ask which customer this project is for and pin it. If
-   `get_company` shows no `company_profile` artifact, run the
+   `get_company` returns no `profile`, run the
    company-profile skill first.
 
 2. **Sources (optional).** If the user uploaded a transcript or document,
