@@ -63,7 +63,7 @@ Install them from this GitHub repository, so they stay up to date:
 |---|---|
 | `makemedia` | Core rules: one customer per project, uploading transcripts, sharing |
 | `company-profile` | Sets up a company: basics, then services, customer characteristics, content topics and SEO keywords |
-| `customer-persona` | Creates a customer persona |
+| `customer-persona` | Creates a buyer persona, with a slide version |
 | `discovery-interview` | Runs an interview to set engagement goals |
 | `linkedin-post` | Writes a LinkedIn post, optionally from a transcript |
 

@@ -1,14 +1,15 @@
 ---
 name: customer-persona
-description: Generate a rich, detailed customer persona for a saved company using makemedia's persona workflow. Use when the user asks for a customer persona, buyer persona or ideal customer description for one of their products, services or customer problems. Requires the makemedia connector and a saved company profile.
+description: Create a detailed buyer persona (customer persona) for a saved company with makemedia's persona workflow, with a condensed version for a presentation slide. Use when the user asks for a buyer persona, customer persona or ideal customer description, wants ideas for which buyers to target, or wants to see or reuse the company's saved personas. Requires the makemedia connector and a company whose services are set up.
 ---
 
 # Customer persona
 
-Generates a detailed customer persona from a saved company profile, a subset
-of the company's services, and the problem the customer is trying to solve.
-The generation runs on the makemedia server; your job is to collect the
-inputs, relay any questions, and present the result.
+A persona describes one buyer: the job role being targeted, the problem
+they're trying to solve, and which of the company's services they'd buy.
+makemedia drafts the full persona on its server. Once the user accepts it,
+the persona is saved together with a condensed version for a presentation
+slide. Later workflows, such as LinkedIn posts, use the two versions together.
 
 ## Steps
 
@@ -18,29 +19,61 @@ inputs, relay any questions, and present the result.
    `get_company`. If its `profile` has no `services`, run the
    company-profile skill first.
 
-2. **Pick the services.** Show the user the services from
-   `profile.services.items` and ask which ones suit this customer. Pass
-   them exactly as saved.
+2. **Fill in the form.** Ask for these three things, showing each one's
+   help text. Use the user's own words.
+   - **Target job role for this buyer** (`job_title`). What role within
+     your ideal client profile are you targeting? Examples: CEO of a
+     mid-sized pharmaceutical company • doctor • CIO of a large security
+     company • managing partner of a tax law firm • HR manager
+   - **What problem is this buyer trying to solve?** (`problem`). A short
+     phrase describing the problem they're trying to solve. Examples:
+     employee retention • HIPAA compliance • lead generation
+   - **Products and services for this buyer** (`services`). Which of your
+     products or services would this persona buy? Show
+     `profile.services.items` as a numbered list and let the user pick one
+     or more. Pass them exactly as saved.
 
-3. **Get the problem.** Ask for a short description of the problem this
-   customer is trying to solve (one or two sentences is enough).
+   **If the user isn't sure what to put**, offer ideas: call
+   `start_workflow` with `workflow: "persona_ideas"`, the `company_id` and
+   `inputs: {}`. Show the ideas as `agent_instructions` say. When the user
+   picks one, use its job title and organization type as the job role (for
+   example "HR Director, regional bank"), its problem and its services. The
+   user can change any of them first. Ideas need the company's customer
+   characteristics; if they aren't set up, run the company-profile skill
+   or ask the user to fill in the form themselves.
 
-4. **Start.** Call `start_workflow` with:
-   - `workflow`: `"customer_persona"`
-   - `company_id`
-   - `inputs`: `{"services": [...], "problem": "..."}`
+3. **Draft the persona.** Call `start_workflow` with
+   `workflow: "customer_persona"`, the `company_id` and
+   `inputs: {"job_title": "...", "problem": "...", "services": [...]}`.
+   If it's `working`, call `get_session` until it completes. If it
+   `failed`, tell the user and offer to try again.
 
-5. **Follow the response.** Every response has a `status` and
-   `agent_instructions`. Always follow `agent_instructions`:
-   - `needs_input`: the server needs a clarification. Ask the user
-     `prompt_to_user` exactly as written (listing `input.options` if there
-     are any), then call `respond` with the `session_id`, the `turn`, and the
-     user's reply word for word. Never answer for the user.
-   - `working`: tell the user it's in progress and call `get_session`.
-   - `complete`: go to step 6.
-   - `failed`: tell the user and offer to try again.
+4. **Review it with the user.** Show `result.persona` exactly as written.
+   It's Markdown, so don't summarize, reformat or reword it. Ask the user
+   to accept it, to ask for changes, or to get a different one.
+   - **Changes:** edit the text yourself as the user asks, keeping its
+     format, and show it again. Keep the edited name and job title in mind
+     if they change.
+   - **A different one:** run step 3 again, with changed inputs if the user
+     wants. Each run gives a new persona.
 
-6. **Present the persona.** Format `result` for reading: name and headline
-   first, then profile, goals, pain points, current solutions, objections,
-   buying process, channels, messaging, a day in the life, and quotes.
-   Mention that it's saved (`artifact_id`) and can be used in later work.
+   Don't save anything until the user accepts.
+
+5. **Accept it.** Call `start_workflow` with `workflow: "persona_slide"`,
+   the `company_id` and `inputs: {"draft_id": "<the draft's artifact_id>"}`.
+   If the user changed the persona, also pass the full edited text as
+   `persona`, and `name` or `job_title` if those changed. This writes the
+   slide version and saves both as one persona.
+
+6. **Present the result.** Show `result.slide` exactly as written. Tell the
+   user the persona is saved (`artifact_id`), with its full and slide
+   versions, and that later work such as LinkedIn posts can use it. Offer
+   to create another persona for a different buyer.
+
+## Saved personas
+
+To see the company's personas, call `list_artifacts` with
+`type: "persona"`. Each one's `title` is its name and job title. Use
+`get_artifact` for one persona's full (`persona`) and slide (`slide`)
+versions. New personas never reuse a saved persona's name, and the ideas
+skip job titles already covered.
