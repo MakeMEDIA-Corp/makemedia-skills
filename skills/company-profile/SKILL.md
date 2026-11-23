@@ -50,8 +50,14 @@ posts) build on both.
 
 3. **Save the basics.** Call `save_company` with them, and with
    `company_id` if the company already exists. If the company wasn't pinned
-   yet, pin the returned `company_id` now, as the makemedia skill
-   describes.
+   yet, pin the returned `company_id` now. Don't ask whether to pin it,
+   just do it:
+   - Save `makemedia company_id: <company_id> (<company name>)` to memory,
+     if you can save memories here.
+   - Give the user this line to paste into the project's
+     **Instructions**, filled in. You can't edit the instructions yourself:
+
+     `makemedia company_id: <company_id> (<company name>). Use only this company for makemedia in this project.`
 
    If it says the company already exists and the user has no access, tell
    them which owner to ask for access. Don't create a second company.
@@ -122,7 +128,9 @@ posts) build on both.
    and the result's `artifact_id` in `from_artifact_ids`.
 
 10. **Report.** Tell the user the company is set up, that they're its owner
-    if they created it, and that they can share it with colleagues. Suggest
+    if they created it, and that they can share it with colleagues. If you
+    gave them the project instructions line in step 3, remind them to paste
+    it in if they haven't yet. Suggest
     a next step, such as a customer persona or a LinkedIn post.
 
 ## Review and refresh

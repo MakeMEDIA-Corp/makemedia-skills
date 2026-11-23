@@ -32,12 +32,14 @@ makemedia company_id: co_abc123 (Acme Corp)
 ## 2. Pin the company to the project
 
 As soon as the company_id is known (chosen, or returned by
-`save_company`):
+`save_company`), pin it. Don't ask the user whether to pin it: one company
+per project is required, not optional.
 
 1. **Save it to memory**, if you can save memories here, with exactly:
    `makemedia company_id: <company_id> (<company name>)`
-2. **Ask the user to add it to the project instructions.** This is the
-   reliable way, because memory can be turned off. Give them the exact line:
+2. **Give the user the line for the project instructions.** This is the
+   reliable way, because memory can be turned off. You can't edit project
+   instructions yourself, so give them the exact line, filled in:
 
    > Open this project's **Instructions** and add:
    > `makemedia company_id: co_abc123 (Acme Corp). Use only this company for makemedia in this project.`
