@@ -7,7 +7,7 @@
       "name": "makemedia",
       "source": "./",
       "description": "Company profiles, personas, interviews and LinkedIn posts with the makemedia connector.",
-      "version": "0.4.0"
+      "version": "0.4.1"
     }
   ]
 }
