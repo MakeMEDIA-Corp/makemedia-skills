@@ -112,19 +112,22 @@ posts) build on both.
    **Enrich them with an SEO tool, if the user has one.** Check whether you
    have a skill or connector for an SEO service such as Semrush, Moz or
    Ahrefs. If you do, use it to look up each keyword's monthly search
-   volume, keyword difficulty (0-100) and the company website's current
-   ranking, in the company's region if it has one. The tool may also
+   volume, keyword difficulty (0-100), the company website's current
+   ranking and the search intent (informational, navigational, commercial
+   or transactional; Semrush abbreviates them I, N, C and T), in the
+   company's region if it has one. The tool may also
    suggest closely related keywords with better volume; offer those as
-   additions. Only record numbers the tool returned, never estimates, and
+   additions. Only record numbers and intents the tool returned, never estimates, and
    name the tool in each keyword's `source`. If you have no SEO tool, skip
    this part, and mention once that connecting one (for example Semrush or
-   Moz) would add search volume and rankings.
+   Moz) would add search volume, rankings and search intent.
 
-   Show the keywords as a table (keyword, then volume, difficulty and rank
-   if you have them), sorted by volume when known. Ask the user to approve
+   Show the keywords as a table (keyword, then volume, difficulty, rank
+   and intent if you have them), sorted by volume when known. Ask the user to approve
    the list or to add or remove keywords. Then save it with
    `save_company_settings`: `keywords` as a list of objects, each with
-   `keyword` and any of `search_volume`, `difficulty`, `rank` and `source`,
+   `keyword` and any of `search_volume`, `difficulty`, `rank`, `intent`
+   (comma-separated when there are several) and `source`,
    and the result's `artifact_id` in `from_artifact_ids`.
 
 10. **Report.** Tell the user the company is set up, that they're its owner

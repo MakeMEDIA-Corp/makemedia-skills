@@ -1,6 +1,6 @@
 {
   "name": "makemedia",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "Company profiles, personas, interviews and LinkedIn posts with the makemedia connector.",
   "author": {"name": "MakeMEDIA", "email": "vivek@kcilink.com"},
   "homepage": "https://github.com/MakeMEDIA-Corp/makemedia-skills"
