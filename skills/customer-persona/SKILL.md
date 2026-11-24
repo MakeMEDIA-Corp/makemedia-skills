@@ -30,15 +30,19 @@ slide. Later workflows, such as LinkedIn posts, use the two versions together.
      employee retention • HIPAA compliance • lead generation
    - **Products and services for this buyer** (`services`). Which of your
      products or services would this persona buy? Show
-     `profile.services.items` as a numbered list and let the user pick one
-     or more. Pass them exactly as saved.
+     `profile.services.items` as a numbered list and ask the user to pick
+     the ones this buyer would actually buy, at most five. When the company
+     has more than five, one buyer doesn't buy everything, so ask for the
+     handful that fit. Don't pick them yourself. Pass them exactly as
+     saved.
 
    **If the user isn't sure what to put**, offer ideas: call
    `start_workflow` with `workflow: "persona_ideas"`, the `company_id` and
    `inputs: {}`. Show the ideas as `agent_instructions` say. When the user
    picks one, use its job title and organization type as the job role (for
-   example "HR Director, regional bank"), its problem and its services. The
-   user can change any of them first. Ideas need the company's customer
+   example "HR Director, regional bank"), its problem and its services. If
+   the idea has no services, or more than five, ask the user to pick the
+   ones this buyer would buy. The user can change any of them first. Ideas need the company's customer
    characteristics; if they aren't set up, run the company-profile skill
    or ask the user to fill in the form themselves.
 
@@ -48,9 +52,12 @@ slide. Later workflows, such as LinkedIn posts, use the two versions together.
    If it's `working`, call `get_session` until it completes. If it
    `failed`, tell the user and offer to try again.
 
-4. **Review it with the user.** Show `result.persona` exactly as written.
-   It's Markdown, so don't summarize, reformat or reword it. Ask the user
-   to accept it, to ask for changes, or to get a different one.
+4. **Review it with the user.** The user can't see tool results, so paste
+   the full text of `result.persona` into your reply: every section, word
+   for word, as Markdown. Never summarize, shorten, excerpt or reword it,
+   even though it's long; the user needs to read all of it to decide.
+   Then ask the user to accept it, to ask for changes, or to get a
+   different one. After any edits, show the full edited text again.
    - **Changes:** edit the text yourself as the user asks, keeping its
      format, and show it again. Keep the edited name and job title in mind
      if they change.
@@ -65,7 +72,9 @@ slide. Later workflows, such as LinkedIn posts, use the two versions together.
    `persona`, and `name` or `job_title` if those changed. This writes the
    slide version and saves both as one persona.
 
-6. **Present the result.** Show `result.slide` exactly as written. Tell the
+6. **Present the result.** Paste the full text of `result.slide` into your
+   reply: every section and bullet, word for word, as Markdown. Don't
+   summarize or shorten it. Then tell the
    user the persona is saved (`artifact_id`), with its full and slide
    versions, and that later work such as LinkedIn posts can use it. Offer
    to create another persona for a different buyer.
@@ -77,3 +86,18 @@ To see the company's personas, call `list_artifacts` with
 `get_artifact` for one persona's full (`persona`) and slide (`slide`)
 versions. New personas never reuse a saved persona's name, and the ideas
 skip job titles already covered.
+
+**Changing a saved persona.** The user changes the full version; the slide
+version is always rewritten from it, never edited by itself. Show the
+user the full version, edit it as they ask, and show the full edited text
+again. When they're happy, call `start_workflow` with
+`workflow: "persona_slide"`, the `company_id` and
+`inputs: {"persona_id": "<the persona's artifact_id>", "persona": "<the full edited text>"}`,
+plus `name` or `job_title` if those changed. This overwrites both versions
+of that persona, keeping its `artifact_id`. Present the new slide as in
+step 6.
+
+**Names are unique.** Two personas can't share a name. If saving is refused
+because a saved persona already has the name, ask the user for a different
+name, or, if they meant to change that persona, use its `persona_id` as
+above. Don't accept the same draft twice.
